@@ -118,6 +118,7 @@ def organizar_archivos(facturas, no_identificados, carpeta_area, carpeta_no_iden
     for codigo, datos in facturas.items():
         identificacion = datos["identificacion"]
         archivos = datos["archivos"]
+        carpeta_factura_encontrada = False  # Bandera para saber si se encontró una carpeta para la factura
         
         # Buscar carpeta de EPS correspondiente
         for eps_carpeta in os.listdir(carpeta_area):
@@ -129,6 +130,7 @@ def organizar_archivos(facturas, no_identificados, carpeta_area, carpeta_no_iden
                     None
                 )
                 if carpeta_factura:
+                    carpeta_factura_encontrada = True
                     ruta_factura = os.path.join(ruta_eps, carpeta_factura)
                     if not os.path.exists(ruta_factura):
                         os.makedirs(ruta_factura)
@@ -141,10 +143,27 @@ def organizar_archivos(facturas, no_identificados, carpeta_area, carpeta_no_iden
                     ruta_txt = os.path.join(ruta_factura, f"{identificacion}.txt")
                     with open(ruta_txt, "w") as txt_file:
                         txt_file.write(f"Número de identificación: {identificacion}")
+                    break  # Salir del bucle si se encuentra una carpeta para la factura
+        
+        # Si no se encontró una carpeta para la factura, crearla en "Sin identificar"
+        if not carpeta_factura_encontrada:
+            ruta_factura_no_identificada = os.path.join(carpeta_no_identificados, f"Factura_{codigo}")
+            if not os.path.exists(ruta_factura_no_identificada):
+                os.makedirs(ruta_factura_no_identificada)
+            
+            # Mover los archivos a la carpeta
+            for archivo in archivos:
+                shutil.move(archivo, os.path.join(ruta_factura_no_identificada, os.path.basename(archivo)))
+            
+            # Crear archivo .txt con la identificación del cliente
+            ruta_txt = os.path.join(ruta_factura_no_identificada, f"{identificacion}.txt")
+            with open(ruta_txt, "w") as txt_file:
+                txt_file.write(f"Número de identificación: {identificacion}")
     
     # Mover archivos no identificados
     for archivo in no_identificados:
         shutil.move(archivo, os.path.join(carpeta_no_identificados, os.path.basename(archivo)))
+
 
 # Ejecutar el flujo para todas las áreas
 areas = [area for area in os.listdir(carpeta_principal) if os.path.isdir(os.path.join(carpeta_principal, area))]
