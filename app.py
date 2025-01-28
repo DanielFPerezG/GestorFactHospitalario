@@ -9,13 +9,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 
 # Configura las rutas principales
 carpeta_principal = r"C:\Users\dafep\Documents\prueba facturación\24 DE ENERO"
-ruta_documentos = os.path.join(carpeta_principal, "ESPECIALIZADA", "documentos.pdf")
-carpeta_especializada = os.path.join(carpeta_principal, "ESPECIALIZADA")
-carpeta_no_identificados = r"C:\Users\dafep\Documents\prueba facturación\24 DE ENERO\ESPECIALIZADA\Sin identificar"
-
-# Crea carpeta para no identificados si no existe
-if not os.path.exists(carpeta_no_identificados):
-    os.makedirs(carpeta_no_identificados)
+poppler_path = r'poppler-24.08.0\\Library\\bin'
 
 # Crea carpetas temporales para manejar archivos
 carpeta_temp = "temp_pages"
@@ -25,7 +19,7 @@ if not os.path.exists(carpeta_temp):
 
 def buscar_identificacion(texto):
     """Busca el número de identificación en el texto, probando CC, RC y TI."""
-    identificadores = ["Identificación: CC", "Identificación: RC", "Identificación: TI", ": CC", "Número de documento"]
+    identificadores = ["Identificación: CC", "Identificación: RC", "Identificación: TI", 'Identificacion CC', ": CC", "Número de documento", 'IDENTIDAD:']
     for iden in identificadores:
         if iden in texto:
             try:
@@ -56,14 +50,14 @@ def dividir_pdf(ruta_pdf, carpeta_destino):
 # Extrae texto de un archivo PDF escaneado
 def extraer_texto(pdf_path):
     # Convierte la página PDF en una imagen
-    images = convert_from_path(pdf_path, dpi=300, poppler_path=r'poppler-24.08.0\Library\bin')
+    images = convert_from_path(pdf_path, dpi=300, poppler_path=poppler_path)
     texto_completo = ""
     for image in images:
         texto_completo += pytesseract.image_to_string(image, lang="spa")
     return texto_completo
 
 # Procesa cada página del PDF
-def procesar_documentos():
+def procesar_documentos(ruta_documentos):
     dividir_pdf(ruta_documentos, carpeta_temp)
     documentos = os.listdir(carpeta_temp)
     facturas = {}
@@ -81,7 +75,7 @@ def procesar_documentos():
                     try:
                         codigo_factura = texto.split("Factura Electrónica de venta:")[1].split()[0]
                     except IndexError:
-                        #print(f"Error: No se pudo extraer el código de factura en el archivo {ruta_doc}. Verifica el formato.")
+                        print(f"Error: No se pudo extraer el código de factura en el archivo {ruta_doc}. Verifica el formato.")
                         continue
                 elif "Factura Electrónica de venta;" in texto:
                     codigo_factura = texto.split("Factura Electrónica de venta;")[1].split()[0]
@@ -119,15 +113,15 @@ def procesar_documentos():
     return facturas, no_identificados
 
 # Mover los archivos a las carpetas correspondientes
-def organizar_archivos(facturas, no_identificados):
+def organizar_archivos(facturas, no_identificados, carpeta_area, carpeta_no_identificados):
     # Organizar facturas
     for codigo, datos in facturas.items():
         identificacion = datos["identificacion"]
         archivos = datos["archivos"]
         
         # Buscar carpeta de EPS correspondiente
-        for eps_carpeta in os.listdir(carpeta_especializada):
-            ruta_eps = os.path.join(carpeta_especializada, eps_carpeta)
+        for eps_carpeta in os.listdir(carpeta_area):
+            ruta_eps = os.path.join(carpeta_area, eps_carpeta)
             if os.path.isdir(ruta_eps):
                 # Busca carpeta que contenga el código de la factura
                 carpeta_factura = next(
@@ -152,13 +146,28 @@ def organizar_archivos(facturas, no_identificados):
     for archivo in no_identificados:
         shutil.move(archivo, os.path.join(carpeta_no_identificados, os.path.basename(archivo)))
 
-# Ejecutar el flujo
-dividir_pdf(ruta_documentos, carpeta_temp)
-facturas_procesadas, no_identificados = procesar_documentos()
-#print(facturas_procesadas)
-#print(no_identificados)
-organizar_archivos(facturas_procesadas, no_identificados)
+# Ejecutar el flujo para todas las áreas
+areas = [area for area in os.listdir(carpeta_principal) if os.path.isdir(os.path.join(carpeta_principal, area))]
 
-# Limpieza
-shutil.rmtree(carpeta_temp)
-print("Organización completada.")
+
+for area in areas:
+    carpeta_area = os.path.join(carpeta_principal, area)
+    carpeta_no_identificados = os.path.join(carpeta_area, "Sin identificar")
+
+    if not os.path.exists(carpeta_no_identificados):
+        os.makedirs(carpeta_no_identificados)
+
+    # Crea carpetas temporales para manejar archivos
+    if not os.path.exists(carpeta_temp):
+        os.makedirs(carpeta_temp)
+
+    ruta_documentos = os.path.join(carpeta_area, "documentos.pdf")
+
+    if os.path.exists(ruta_documentos):
+        dividir_pdf(ruta_documentos, carpeta_temp)
+        facturas_procesadas, no_identificados = procesar_documentos(ruta_documentos)
+        organizar_archivos(facturas_procesadas, no_identificados, carpeta_area, carpeta_no_identificados)
+
+        # Limpieza de la carpeta temporal
+        shutil.rmtree(carpeta_temp)
+print("Organización completada para todas las áreas.")
