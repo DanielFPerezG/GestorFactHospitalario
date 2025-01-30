@@ -1,6 +1,6 @@
 import os
 import shutil
-from rganizar import dividir_pdf, procesar_documentos, organizar_archivos
+from organizar import dividir_pdf, procesar_documentos, organizar_archivos
 
 # Configura las rutas principales
 carpeta_principal = r"C:\Users\dafep\Documents\prueba facturación\24 DE ENERO"
@@ -22,9 +22,12 @@ for area in areas:
     ruta_documentos = os.path.join(carpeta_area, "documentos.pdf")
 
     if os.path.exists(ruta_documentos):
-        facturas_procesadas, no_identificados = procesar_documentos(ruta_documentos, carpeta_temp)
-        organizar_archivos(facturas_procesadas, no_identificados, carpeta_area, carpeta_no_identificados)
-
+        facturas_procesadas, archivos_usuario, no_identificados = procesar_documentos(ruta_documentos, carpeta_temp)
+        organizar_archivos(facturas_procesadas, archivos_usuario, no_identificados, carpeta_area, carpeta_no_identificados)
+        
         shutil.rmtree(carpeta_temp)
 
 print("Organización completada para todas las áreas.")
+
+
+

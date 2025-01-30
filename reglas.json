@@ -1,0 +1,136 @@
+{
+    "ASMET SALUD": {
+        "keywords": {
+            "AUTORIZACION": ["AUTORIZACION DE SERVICIOS DE SALUD", "NOMBRE DE QUIEN AUTORIZA"],
+            "FACTURA": ["FACTURA ELECTRÓNICA DE VENTA N", "Factura Electrónica de venta:"],
+            "VALIDADOR": ["Comprobación de estado de afiliado", "Estado de afiliado", "Información de afiliación en la Base de Datos Únicas de Afiliados"],
+            "RECIBO": ["RECIBO DE CAJA No", "No FACTURA ASOCIADA"],
+            "HISTORIA": ["REPORTE DE HISTORIA"],
+            "ORDEN": ["Orden:", "PROCEDIMIENTOS", "AYUDAS DIAGNÓSTICA", "Remisión", "Ordenación de Procedimientos"]
+        },
+        "combinations": [
+            {
+                "name": "AUT_{codigo_factura}.pdf",
+                "documents": ["AUTORIZACION"]
+            },
+            {
+                "name": "FVS_{codigo_factura}.pdf",
+                "documents": ["FACTURA", "RECIBO"]	
+            },
+            {
+                "name": "HCL_{codigo_factura}.pdf",
+                "documents": ["HISTORIA"]	
+            },
+            {
+                "name": "SPS_{codigo_factura}.pdf",
+                "documents": ["VALIDADOR", "ORDEN"]
+            }
+        ]
+    },
+    "NUEVA EPS": {
+        "keywords": {
+            "FACTURA": ["FACTURA ELECTRÓNICA DE VENTA N", "Factura Electrónica de venta:"],
+            "VALIDADOR": ["Consulta del Estado de Afiliación"],
+            "AUTORIZACION": ["Autorización Servicios", "AUTORIZACIÓN DE SERVICIOS", "Esta autorización es netamente administrativa"],
+            "RECIBO": ["RECIBO DE CAJA No", "No FACTURA ASOCIADA"],
+            "HISTORIA": ["REPORTE DE HISTORIA"],
+            "REPORTE IMAGENOLOGIA": ["REPORTE DE HISTORIA"],
+            "REPORTE LABORATORIO": ["Resultado Laboratorio"],
+            "ORDEN": ["PROCEDIMIENTOS", "Remisión", "Ordenación de Procedimientos"]	
+            
+        },
+        "combinations": [
+            {
+                "name": "FVS_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["FACTURA"]
+            },
+            {
+                "name": "PDE_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["AUTORIZACION", "VALIDADOR", "RECIBO"]
+            },
+            {
+                "name": "HEV_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["HISTORIA"]
+            },
+            {
+                "name": "PDX_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["REPORTE IMAGENOLOGIA", "REPORTE LABORATORIO"]
+            },
+            {
+                "name": "OPF_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["ORDEN"]
+            }
+        ]
+    },
+    "SALUD TOTAL": {
+        "keywords": {
+            "FACTURA": ["FACTURA ELECTRÓNICA DE VENTA N", "Factura Electrónica de venta:"],
+            "VALIDADOR": ["ESTADO", "ALIANZA", "PROGRAMAS ESPECIALES", "TIPO PROTEGIDO"],
+            "DOCUMENTO DE IDENTIDAD": ["REPUBLICA DE COLOMBIA", "IDENTIFICACION PERSONAL"],
+            "AUTORIZACION": ["ENTIDAD REPONSABLE DEL PAGO", "INFORMACIÓN DEL PACIENTE", "INFORMACIÓN PRESTADOR", "INFORMACIÓN DE LA TRANSACCIÓN"],
+            "RECIBO": ["RECIBO DE CAJA No", "No FACTURA ASOCIADA"],
+            "HISTORIA": ["REPORTE DE HISTORIA"],
+            "REPORTE IMAGENOLOGIA": ["REPORTE DE HISTORIA"],
+            "REPORTE LABORATORIO": ["Resultado Laboratorio"],
+            "ORDEN": ["PROCEDIMIENTOS", "Remisión", "Ordenación de Procedimientos", "SOLICITUD DE INTERCONSULTA"]	
+            
+        },
+        "combinations": [
+            {
+                "name": "{NIT_hospital}_{codigo_factura}_1_1.pdf",
+                "documents": ["FACTURA"]
+            },
+            {
+                "name": "{NIT_hospital}_{codigo_factura}_15_1.pdf",
+                "documents": ["VALIDADOR", "DOCUMENTO DE IDENTIDAD"]
+            },
+            {
+                "name": "{NIT_hospital}_{codigo_factura}_5_1.pdf",
+                "documents": ["HISTORIA", "ORDEN"]
+            },
+            {
+                "name": "{NIT_hospital}_{codigo_factura}_17_1.pdf",
+                "documents": ["AUTORIZACION"]
+            },
+            {
+                "name": "{NIT_hospital}_{codigo_factura}_7_1.pdf",
+                "documents": ["REPORTE IMAGENOLOGIA", "REPORTE LABORATORIO"]
+            }
+        ]
+    },
+    "SANITAS": {
+        "keywords": {
+            "FACTURA": ["FACTURA ELECTRÓNICA DE VENTA N", "Factura Electrónica de venta:"],
+            "VALIDADOR": ["Validación", "SANITAS", "Compañia"],
+            "AUTORIZACION": ["Autorización Servicios"],
+            "RECIBO": ["RECIBO DE CAJA No", "No FACTURA ASOCIADA"],
+            "HISTORIA": ["REPORTE DE HISTORIA"],
+            "REPORTE IMAGENOLOGIA": ["REPORTE DE HISTORIA"],
+            "REPORTE LABORATORIO": ["Resultado Laboratorio"],
+            "ORDEN": ["PROCEDIMIENTOS", "Remisión", "Ordenación de Procedimientos"]	
+            
+        },
+        "combinations": [
+            {
+                "name": "FVS_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["FACTURA"]
+            },
+            {
+                "name": "PDE_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["AUTORIZACION", "VALIDADOR", "RECIBO"]
+            },
+            {
+                "name": "HEV_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["HISTORIA"]
+            },
+            {
+                "name": "PDX_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["REPORTE IMAGENOLOGIA", "REPORTE LABORATORIO"]
+            },
+            {
+                "name": "OPF_{NIT_hospital}_{codigo_factura}.pdf",
+                "documents": ["ORDEN"]
+            }
+        ]
+    }
+}
