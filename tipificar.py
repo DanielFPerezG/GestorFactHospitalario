@@ -68,6 +68,8 @@ def process_invoice_folder(folder_path, eps_name):
     
     docs_by_type = {}
     codigo_factura = None
+    respaldo_folder = os.path.join(folder_path, "respaldo")
+    os.makedirs(respaldo_folder, exist_ok=True)
     
     for file in os.listdir(folder_path):
         if file.endswith(".pdf"):
@@ -88,6 +90,7 @@ def process_invoice_folder(folder_path, eps_name):
         print(f"No se encontró código de factura en {folder_path}")
         return
     
+    archivos_utilizados = set()
     # Generar PDFs combinados
     for combo in eps_rules.get("combinations", []):
         output_pdf_name = combo["name"].replace("{codigo_factura}", codigo_factura)
@@ -99,6 +102,7 @@ def process_invoice_folder(folder_path, eps_name):
         writer = PdfWriter()
         for doc_type in combo["documents"]:
             for pdf in docs_by_type.get(doc_type, []):
+                archivos_utilizados.add(pdf)
                 reader = PdfReader(pdf)
                 for page in reader.pages:
                     writer.add_page(page)
@@ -106,6 +110,13 @@ def process_invoice_folder(folder_path, eps_name):
         with open(output_path, "wb") as output_file:
             writer.write(output_file)
         print(f"Generado: {output_pdf_name}")
+
+    # Mover archivos utilizados a la carpeta de respaldo
+    for file_path in archivos_utilizados:
+        file_name = os.path.basename(file_path)
+        new_path = os.path.join(respaldo_folder, file_name)
+        os.rename(file_path, new_path)
+        print(f"Movido a respaldo: {file_name}")
 
 # Recorrer estructura de carpetas
 def process_main_folder(main_folder):
