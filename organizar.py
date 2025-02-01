@@ -3,24 +3,29 @@ import shutil
 from pdf2image import convert_from_path
 import pytesseract
 from PyPDF2 import PdfReader, PdfWriter
-import json
+import re
+
+# Configura las rutas principales
+carpeta_principal = r"C:\Users\dafep\Documents\prueba facturación\24 DE ENERO"
+carpeta_temp = "temp_pages"
+
 
 # Ruta al ejecutable de Tesseract OCR
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Configura la ruta de Poppler
-poppler_path = r'poppler-24.08.0\\Library\\bin'
+poppler_path = r'Recursos\poppler-24.08.0\\Library\\bin'
 
 def buscar_identificacion(texto):
     """Busca el número de identificación en el texto, probando CC, RC y TI."""
-    identificadores = ["Identificación: CC", "Identificación: RC", "Identificación: TI", 
-                       'Identificacion CC', ": CC", "Número de documento", 'IDENTIDAD:']
+    identificadores = ["Identificación: CC", "Identificación: RC", "Identificacion RC", "Identificación: TI", 
+                       'Identificacion CC']
     for iden in identificadores:
         if iden in texto:
             try:
                 return texto.split(f"{iden} ")[1].split()[0], iden
             except IndexError:
-                continue  
+                continue
     return None, None  
 
 
@@ -78,14 +83,18 @@ def procesar_documentos(ruta_documentos, carpeta_temp):
                 facturas[codigo_factura] = {"identificacion": identificacion, "archivos": [ruta_doc]}
                 asociado = True
             else:
-                identificacion, _ = buscar_identificacion(texto)
-                if identificacion:
-                    archivos_usuario.setdefault(identificacion, []).append(ruta_doc)
-                    asociado = True
+                # Verifica si el archivo contiene alguna identificación ya detectada
+                for identificacion in archivos_usuario.keys():
+                    if identificacion in texto:
+                        archivos_usuario[identificacion].append(ruta_doc)
+                        asociado = True
+                        break  # Si encuentra una coincidencia, no sigue buscando
         except Exception as e:
             print(f"Error procesando el archivo {ruta_doc}: {e}")
 
         if not asociado:
+            print(f"Archivo no identificado: {ruta_doc}")
+            print(f"\n{texto}")
             no_identificados.append(ruta_doc)
 
     return facturas, archivos_usuario, no_identificados
@@ -148,3 +157,27 @@ def organizar_archivos(facturas, archivos_usuario, no_identificados, carpeta_are
     
     for archivo in no_identificados:
         shutil.move(archivo, os.path.join(carpeta_no_identificados, os.path.basename(archivo)))
+
+
+# Ejecutar el flujo para todas las áreas
+areas = [area for area in os.listdir(carpeta_principal) if os.path.isdir(os.path.join(carpeta_principal, area))]
+
+for area in areas:
+    carpeta_area = os.path.join(carpeta_principal, area)
+    carpeta_no_identificados = os.path.join(carpeta_area, "Sin identificar")
+
+    if not os.path.exists(carpeta_no_identificados):
+        os.makedirs(carpeta_no_identificados)
+
+    if not os.path.exists(carpeta_temp):
+        os.makedirs(carpeta_temp)
+
+    ruta_documentos = os.path.join(carpeta_area, "documentos.pdf")
+
+    if os.path.exists(ruta_documentos):
+        facturas_procesadas, archivos_usuario, no_identificados = procesar_documentos(ruta_documentos, carpeta_temp)
+        organizar_archivos(facturas_procesadas, archivos_usuario, no_identificados, carpeta_area, carpeta_no_identificados)
+        
+        shutil.rmtree(carpeta_temp)
+
+print("Organización completada para todas las áreas.")

@@ -4,14 +4,13 @@ from pdf2image import convert_from_path
 import pytesseract
 from PyPDF2 import PdfReader, PdfWriter
 
+
+from config import NIT_HOSPITAL
 # Ruta al ejecutable de Tesseract OCR
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Configura la ruta de Poppler
-poppler_path = r'poppler-24.08.0\\Library\\bin'
-
-
-NIT_HOSPITAL = "890700666"
+poppler_path = r'Recursos\poppler-24.08.0\\Library\\bin'
 
 # Cargar reglas desde un archivo JSON
 def load_eps_rules(json_file):
