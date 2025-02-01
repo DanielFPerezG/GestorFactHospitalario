@@ -5,7 +5,14 @@ import pytesseract
 from PyPDF2 import PdfReader, PdfWriter
 
 
-from config import NIT_HOSPITAL
+from dotenv import load_dotenv
+
+#Leer variables de entorno
+load_dotenv()
+
+# Obtener el NIT del hospital
+NIT_HOSPITAL = os.getenv("NIT_HOSPITAL")
+
 # Ruta al ejecutable de Tesseract OCR
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
