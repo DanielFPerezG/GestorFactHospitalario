@@ -77,6 +77,15 @@ def process_invoice_folder(folder_path, eps_name):
             text = extract_text_from_pdf(pdf_path)
             #print(f"Texto extraído de {file}:\n{text[:500]}")
             doc_type = identify_document_type(text, eps_rules)
+
+            # Si no se identifica el tipo, usar el nombre del archivo si coincide con algún tipo en las reglas
+            if not doc_type:
+                file_base_name = os.path.splitext(file)[0].upper()  # Convertir a mayúsculas para comparación
+                for valid_type in eps_rules.get("keywords", {}):
+                    if valid_type in file_base_name:
+                        doc_type = valid_type
+                        print(f"Tipo de documento asignado por nombre de archivo: {doc_type}")
+                        break
             
             if doc_type:
                 docs_by_type.setdefault(doc_type, []).append(pdf_path)
