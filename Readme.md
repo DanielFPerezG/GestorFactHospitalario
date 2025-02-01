@@ -10,11 +10,10 @@ Este proyecto automatiza la gestión de archivos de facturación hospitalaria. S
 ## 🚀 Instalación y Configuración
 ### 1️⃣ Prerrequisitos
 Antes de ejecutar el código, asegúrate de tener instalado:
-
 - **Tesseract OCR**: Descarga e instala el motor de reconocimiento óptico de caracteres Tesseract desde su [repositorio oficial](https://github.com/UB-Mannheim/tesseract/wiki).
 - **Modelo de idioma español**: En el proyecto, accede a la carpeta `Recursos`, copia el archivo `spa.traineddata` (modelo entrenado para el idioma español) y pégalo en la carpeta de Tesseract: `C:\Program Files\Tesseract-OCR\tessdata`.
-- **Python 3.8+**
-- **Entorno virtual y dependencias**:
+- Python 3.8+
+- Crear un entorno virtual e instalar las dependencias necesarias:
   ```bash
   python3 -m venv env
 
@@ -28,9 +27,10 @@ cd GestorFactHospitalario
 ```
 
 ### 3️⃣ Configurar Variables de Entorno
-Crea un archivo `.env` en la raíz del proyecto y define el NIT del hospital:
+Crea un archivo `.env` en la raíz del proyecto, define el NIT del hospital y la url donde esta la carpeta con la facturación diaria:
 ```ini
 NIT_HOSPITAL=123456789
+MAIN_FOLDER=C:\\Users\\user\\Documents\\FACTURACIÓN\\24 DE ENERO #Remplazala por la dirección de tu carpeta
 ```
 
 ## 📂 Estructura de archivos esperada
@@ -63,8 +63,8 @@ Para procesar los archivos, ejecuta en la terminal:
 
 ## 📌 Recomendaciones
 - Se recomienda ejecutar primero el archivo `organizador.py`.
-- Si algún documento no es trasladado correctamente a su carpeta por temas de calidad de imagen u otros, este se trasladará a la carpeta `Sin identificar`, que se creará dentro de la carpeta con el nombre del día de facturación.
-- Si el organizador reconoce una factura y agrupa archivos por dicha factura, pero no existe una carpeta con el nombre de la misma, se creará una carpeta con el nombre de la factura dentro de `Sin identificar`.
+- Si algún documento no es trasladado correctamente a su carpeta por temas de calidad de imagen u otros, este se trasladará a la carpeta `Sin identificar`, que se creará dentro de la carpeta principal.
+- Si el organizador reconoce una factura y agrupa archivos por dicha factura, pero no existe una carpeta que contenga el nombre de la misma, se creará una carpeta con el nombre de la factura dentro de la carpeta `Sin identificar`.
 - Una vez organizados los archivos no identificados, se recomienda cambiar el nombre de estos archivos por el tipo de documento que son. Si el organizador no logró identificarlos, `tipificacion.py` tampoco lo hará.
 - Si el código no identifica el tipo de documento por su contenido, intentará hacerlo por el nombre del archivo. Por ello, debes renombrar los archivos en mayúsculas con el tipo de documento que representan. Ejemplo: `AUTORIZACION, FACTURA, VALIDADOR, RECIBO, HISTORIA, ORDEN, REPORTE IMAGENOLOGIA, REPORTE LABORATORIO`.
 
@@ -80,11 +80,13 @@ Para procesar los archivos, ejecuta en la terminal:
 4. Corre `tipificacion.py`.
 
 ### Caso 2
-**Escenario:** No has creado las carpetas de cada una de las facturas. Escanea todos los documentos de cada especialidad y agrúpalos en un archivo `documentos.pdf`. Crea una carpeta por especialidad y agrega dicho documento en su interior.
+**Escenario:** No has creado las carpetas de cada una de las facturas. 
 
 **Pasos:**
+1. Crea las carpetas de cada especialidad que facturaste cada día.
+2. Escanea los documentos de cada especialidad en su correspondiente archivo "documentos.pdf" y agregalo en la carpeta de cada especialidad.
 1. Corre `organizador.py`.
-2. El organizador creará en la carpeta `Sin identificar` todas las carpetas de las facturas reconocidas.
+2. El organizador creará la carpeta `Sin identificar` dentro de cada una de las especialidades,dentro se crearan las carpetas de las facturas reconocidas.
 3. Crea las carpetas de las EPS e ingresa sus correspondientes carpetas de factura antes de proceder a correr `tipificacion.py`.
 
 ## 📧 Contacto

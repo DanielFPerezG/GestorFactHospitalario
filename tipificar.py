@@ -148,7 +148,7 @@ def process_main_folder(main_folder):
                             process_invoice_folder(invoice_path, eps)
 
 # Ejecutar proceso
-MAIN_FOLDER = r"C:\Users\dafep\Documents\prueba facturación\24 DE ENERO"
+MAIN_FOLDER = os.getenv("MAIN_FOLDER")
 process_main_folder(MAIN_FOLDER)
 
 

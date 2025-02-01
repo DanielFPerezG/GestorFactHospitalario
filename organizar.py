@@ -5,8 +5,16 @@ import pytesseract
 from PyPDF2 import PdfReader, PdfWriter
 import re
 
+from dotenv import load_dotenv
+
+#Leer variables de entorno
+load_dotenv()
+
+
 # Configura las rutas principales
-carpeta_principal = r"C:\Users\dafep\Documents\prueba facturación\24 DE ENERO"
+
+# Obtener el valor de la variable de entorno
+carpeta_principal = os.getenv("MAIN_FOLDER")
 carpeta_temp = "temp_pages"
 
 
